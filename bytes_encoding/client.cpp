@@ -45,34 +45,54 @@ void FillInstance(example::RequestInstanceByte* instance) {
   instance->set_ad_extend_info(extend_info);
   
   example::ValueMap value_map;
-  example::Value v1;
-  std::string *name = v1.add_value();
+  example::Value name_val;
+  std::string *name = name_val.mutable_s_list()->add_value();
   *name = "Bob Dylan";
-  name = v1.add_value();
+  name = name_val.mutable_s_list()->add_value();
   *name = "Pink Floyd";
-  name = v1.add_value();
+  name = name_val.mutable_s_list()->add_value();
   *name = "Rust Lee";
+  
 
-  example::Value v2;
-  std::string *company = v2.add_value();
+  example::Value age_val;
+  age_val.mutable_i_list()->add_value(64);
+  age_val.mutable_i_list()->add_value(53);
+  age_val.mutable_i_list()->add_value(18);
+
+  example::Value capital_val;
+  capital_val.mutable_d_list()->add_value(8888.4325);
+  capital_val.mutable_d_list()->add_value(21.9876);
+  capital_val.mutable_d_list()->add_value(0.0001);
+
+  example::Value com_val;
+  std::string *company = com_val.mutable_s_list()->add_value();
   *company = "Jing dong";
-  company = v2.add_value();
+  company = com_val.mutable_s_list()->add_value();
   *company = "Baidu";
-  company = v2.add_value();
+  company = com_val.mutable_s_list()->add_value();
   *company = "Google";
 
-  value_map.mutable_value_map()->insert({"person", v1});
-  value_map.mutable_value_map()->insert({"company", v2});
+  
+  value_map.mutable_value_map()->insert({"company", com_val});
 
-  // std::string bytes1 = value_map.SerializeAsString();
+  example::ValueMap *person_vm = value_map.add_sub_feature();
+  person_vm->mutable_value_map()->insert({"employee", name_val});
+  person_vm->mutable_value_map()->insert({"age", age_val});
 
-  // size_t size = value_map->ByteSizeLong();
+  example::ValueMap *capital_vm = value_map.add_sub_feature();
+  capital_vm->mutable_value_map()->insert({"capital", capital_val});
+  
+
+  // size_t size = value_map.ByteSizeLong();
   // void* buffer = malloc(size);
-  // value_map->SerializeToArray(buffer, size);
+  // value_map.SerializeToArray(buffer, size);
+  // std::string buf_bytes();
 
   // std::ostringstream stream;
-  // value_map->SerializeToOstream(&stream);
-  // std::string text = stream.str();
+  // value_map.SerializeToOstream(&stream);
+  // std::string text = stream.str();    
+
+  // std::string bytes1 = value_map.SerializeAsString();
 
   std::string bytes2;
   value_map.SerializeToString(&bytes2);
@@ -89,9 +109,17 @@ void FillInstance(example::RequestInstanceByte* instance) {
         it != vm2.value_map().cend();
         ++it) {
     std::string key = it->first;
-    int size = it->second.value_size();
-    for (int i = 0; i < size; i++) {
-      std::cout << key << " " << it->second.value(i) << std::endl;
+
+    if (it->second.has_s_list()) {
+      int size = it->second.s_list().value_size();
+      for (int i = 0; i < size; i++) {
+        std::cout << key << " " << it->second.s_list().value(i) << std::endl;
+      }
+    } else if (it->second.has_d_list()) {
+      int size = it->second.d_list().value_size();
+      for (int i = 0; i < size; i++) {
+        std::cout << key << " " << it->second.d_list().value(i) << std::endl;
+      }
     }
   }
   std::cout << "End of pritn exact map\n" << std::endl;
