@@ -1,1 +1,0 @@
-This direcotry is about protobuf and how to use it.
