@@ -37,7 +37,7 @@ DEFINE_int32(timeout_ms, 100, "RPC timeout in milliseconds");
 DEFINE_int32(max_retry, 3, "Max retries(not including the first RPC)"); 
 DEFINE_int32(interval_ms, 1000, "Milliseconds between consecutive requests");
 
-void FillInstance(example::RequestInstanceByte* instance) {
+void FillInstance(example::RequestInstanceSimple* instance) {
   std::string h = "ad feature";
   *instance->mutable_header() = h;
   // instance->set_header(h);
@@ -45,24 +45,6 @@ void FillInstance(example::RequestInstanceByte* instance) {
   instance->set_ad_extend_info(extend_info);
   
   example::ValueMap value_map;
-  example::Value name_val;
-  std::string *name = name_val.mutable_s_list()->add_value();
-  *name = "Bob Dylan";
-  name = name_val.mutable_s_list()->add_value();
-  *name = "Pink Floyd";
-  name = name_val.mutable_s_list()->add_value();
-  *name = "Rust Lee";
-  
-
-  example::Value age_val;
-  age_val.mutable_i_list()->add_value(64);
-  age_val.mutable_i_list()->add_value(53);
-  age_val.mutable_i_list()->add_value(18);
-
-  example::Value capital_val;
-  capital_val.mutable_d_list()->add_value(8888.4325);
-  capital_val.mutable_d_list()->add_value(21.9876);
-  capital_val.mutable_d_list()->add_value(0.0001);
 
   example::Value company_val;
   std::string *company = company_val.mutable_s_list()->add_value();
@@ -97,13 +79,42 @@ void FillInstance(example::RequestInstanceByte* instance) {
   value_map.mutable_value_map()->insert({"country", country_val});
   value_map.mutable_value_map()->insert({"company", company_val});
 
-  example::ValueMap *person_vm = value_map.add_sub_feature();
-  person_vm->mutable_value_map()->insert({"employee", name_val});
-  person_vm->mutable_value_map()->insert({"age", age_val});
+  // example::ValueMap *person_vm = value_map.add_sub_feature();
+  // person_vm->mutable_value_map()->insert({"employee", name_val});
+  // person_vm->mutable_value_map()->insert({"age", age_val});
 
-  example::ValueMap *capital_vm = value_map.add_sub_feature();
-  capital_vm->mutable_value_map()->insert({"capital", capital_val});
+  // example::ValueMap *capital_vm = value_map.add_sub_feature();
+  // capital_vm->mutable_value_map()->insert({"capital", capital_val});
+
+  example::Value name_val;
+  std::string *name = name_val.mutable_s_list()->add_value();
+  *name = "Bob Dylan";
+  name = name_val.mutable_s_list()->add_value();
+  *name = "Pink Floyd";
+  name = name_val.mutable_s_list()->add_value();
+  *name = "Rust Lee";
   
+  example::Value age_val;
+  age_val.mutable_i_list()->add_value(64);
+  age_val.mutable_i_list()->add_value(53);
+  age_val.mutable_i_list()->add_value(18);
+
+  example::Value capital_val;
+  capital_val.mutable_d_list()->add_value(8888.4325);
+  capital_val.mutable_d_list()->add_value(21.9876);
+  capital_val.mutable_d_list()->add_value(0.0001);
+  
+  example::ValueMap value_map2;
+  value_map2.mutable_value_map()->insert({"employee", name_val});
+  value_map2.mutable_value_map()->insert({"age", age_val});
+  value_map2.mutable_value_map()->insert({"capital", capital_val});
+
+  std::string bytes1;
+  value_map.SerializeToString(&bytes1);
+  instance->add_ad_features(bytes1);
+
+  std::string bytes2;
+  value_map2.SerializeToString(&bytes2);
 
   // size_t size = value_map.ByteSizeLong();
   // void* buffer = malloc(size);
@@ -115,9 +126,6 @@ void FillInstance(example::RequestInstanceByte* instance) {
   // std::string text = stream.str();    
 
   // std::string bytes1 = value_map.SerializeAsString();
-
-  std::string bytes2;
-  value_map.SerializeToString(&bytes2);
 
   std::cout << "Print value map " << std::endl;
   std::cout << bytes2 << std::endl;
@@ -150,7 +158,7 @@ void FillInstance(example::RequestInstanceByte* instance) {
   std::string data;
   instance->SerializeToString(&data);
 
-  example::RequestInstanceByte inst1;
+  example::RequestInstanceValue inst1;
   inst1.ParseFromString(data);
   std::string data1;
   inst1.SerializeToString(&data1);
@@ -160,7 +168,7 @@ void FillInstance(example::RequestInstanceByte* instance) {
 
 
   std::string strTest;
-  TextFormat::PrintToString(inst2, &strTest);
+  TextFormat::PrintToString(inst1, &strTest);
   std::cout << "Print instance " << std::endl;
   std::cout << strTest << std::endl;
   std::cout << "End print instance \n" << std::endl;

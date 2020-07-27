@@ -50,24 +50,31 @@ message ValueMap {
   repeated ValueMap sub_feature = 2;
 }
 
+message ValueMapSimple {
+  repeated bytes value_map = 1;
+  repeated ValueMapSimple sub_feature = 2;
+}
+
 message RequestInstanceValue {
   string header = 1;
   string ad_extend_info = 2;
   ValueMap common_features = 3;
+  repeated ValueMap ad_features = 4;
 }
 
-message RequestInstanceByte {
+message RequestInstanceSimple {
   string header = 1;
   string ad_extend_info = 2;
-  bytes common_features = 3;
+  ValueMapSimple common_features = 3;
+  repeated ValueMapSimple ad_features = 4;
 }
 
 message EchoRequest {
-  RequestInstanceByte instance = 1;
+  RequestInstanceSimple instance = 1;
 };
 
 message EchoResponse {
-  RequestInstanceByte instance = 1;
+  RequestInstanceSimple instance = 1;
 };
 
 service EchoService {
