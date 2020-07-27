@@ -64,16 +64,38 @@ void FillInstance(example::RequestInstanceByte* instance) {
   capital_val.mutable_d_list()->add_value(21.9876);
   capital_val.mutable_d_list()->add_value(0.0001);
 
-  example::Value com_val;
-  std::string *company = com_val.mutable_s_list()->add_value();
+  example::Value company_val;
+  std::string *company = company_val.mutable_s_list()->add_value();
   *company = "Jing dong";
-  company = com_val.mutable_s_list()->add_value();
+  company = company_val.mutable_s_list()->add_value();
   *company = "Baidu";
-  company = com_val.mutable_s_list()->add_value();
+  company = company_val.mutable_s_list()->add_value();
   *company = "Google";
 
-  
-  value_map.mutable_value_map()->insert({"company", com_val});
+  example::Value country_val;
+  std::string *country = country_val.mutable_s_list()->add_value();
+  *country = "China";
+  country = country_val.mutable_s_list()->add_value();
+  *country = "USA";
+  country = country_val.mutable_s_list()->add_value();
+  *country = "Argentina";
+  country = country_val.mutable_s_list()->add_value();
+  *country = "Egypt";
+
+  example::Value star_val;
+  std::string *star = star_val.mutable_s_list()->add_value();
+  *star = "Sun";
+  star = star_val.mutable_s_list()->add_value();
+  *star = "Mercury";
+  star = star_val.mutable_s_list()->add_value();
+  *star = "Earth";
+  star = star_val.mutable_s_list()->add_value();
+  *star = "Mars";
+
+  // testing the ordering of map in protobuf
+  value_map.mutable_value_map()->insert({"star", star_val});
+  value_map.mutable_value_map()->insert({"country", country_val});
+  value_map.mutable_value_map()->insert({"company", company_val});
 
   example::ValueMap *person_vm = value_map.add_sub_feature();
   person_vm->mutable_value_map()->insert({"employee", name_val});
