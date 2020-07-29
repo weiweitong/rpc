@@ -1,5 +1,10 @@
 msg=$1
-git add -A
-git commit -m "${msg}"
-git push
-git status
+if [ -n "$msg" ]; then
+  git add -A
+  git commit -m "${msg}"
+  git push
+  git status
+  echo "finish add, commit, push"
+else
+  echo "please add commit content"
+fi
