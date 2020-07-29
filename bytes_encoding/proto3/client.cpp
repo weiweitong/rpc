@@ -31,7 +31,7 @@ using namespace google::protobuf;
 DEFINE_string(attachment, "", "Carry this along with requests");
 DEFINE_string(protocol, "baidu_std", "Protocol type. Defined in src/brpc/options.proto");
 DEFINE_string(connection_type, "", "Connection type. Available values: single, pooled, short");
-DEFINE_string(server, "0.0.0.0:10005", "IP Address of server");
+DEFINE_string(server, "0.0.0.0:12333", "IP Address of server");
 DEFINE_string(load_balancer, "", "The algorithm for load balancing");
 DEFINE_int32(timeout_ms, 100, "RPC timeout in milliseconds");
 DEFINE_int32(max_retry, 3, "Max retries(not including the first RPC)"); 
@@ -44,77 +44,107 @@ void FillInstance(example::RequestInstanceSimple* instance) {
   std::string extend_info = "jingdong.com";
   instance->set_ad_extend_info(extend_info);
   
-  example::ValueMap value_map;
-
-  example::Value company_val;
-  std::string *company = company_val.mutable_s_list()->add_value();
+  example::KeyValuePair company_pair;
+  company_pair.set_key("company");
+  example::Value* company_val = company_pair.mutable_value();;
+  std::string *company = company_val->mutable_s_list()->add_value();
   *company = "Jing dong";
-  company = company_val.mutable_s_list()->add_value();
+  company = company_val->mutable_s_list()->add_value();
   *company = "Baidu";
-  company = company_val.mutable_s_list()->add_value();
+  company = company_val->mutable_s_list()->add_value();
   *company = "Google";
 
-  example::Value country_val;
-  std::string *country = country_val.mutable_s_list()->add_value();
+  example::KeyValuePair country_pair;
+  country_pair.set_key("country");
+  example::Value* country_val = country_pair.mutable_value();
+  std::string *country = country_val->mutable_s_list()->add_value();
   *country = "China";
-  country = country_val.mutable_s_list()->add_value();
+  country = country_val->mutable_s_list()->add_value();
   *country = "USA";
-  country = country_val.mutable_s_list()->add_value();
+  country = country_val->mutable_s_list()->add_value();
   *country = "Argentina";
-  country = country_val.mutable_s_list()->add_value();
+  country = country_val->mutable_s_list()->add_value();
   *country = "Egypt";
 
-  example::Value star_val;
-  std::string *star = star_val.mutable_s_list()->add_value();
+  example::KeyValuePair star_pair;
+  star_pair.set_key("star");
+  example::Value* star_val = star_pair.mutable_value();
+  std::string *star = star_val->mutable_s_list()->add_value();
   *star = "Sun";
-  star = star_val.mutable_s_list()->add_value();
+  star = star_val->mutable_s_list()->add_value();
   *star = "Mercury";
-  star = star_val.mutable_s_list()->add_value();
+  star = star_val->mutable_s_list()->add_value();
   *star = "Earth";
-  star = star_val.mutable_s_list()->add_value();
+  star = star_val->mutable_s_list()->add_value();
   *star = "Mars";
 
-  // testing the ordering of map in protobuf
-  value_map.mutable_value_map()->insert({"star", star_val});
-  value_map.mutable_value_map()->insert({"country", country_val});
-  value_map.mutable_value_map()->insert({"company", company_val});
-
-  // example::ValueMap *person_vm = value_map.add_sub_feature();
-  // person_vm->mutable_value_map()->insert({"employee", name_val});
-  // person_vm->mutable_value_map()->insert({"age", age_val});
-
-  // example::ValueMap *capital_vm = value_map.add_sub_feature();
-  // capital_vm->mutable_value_map()->insert({"capital", capital_val});
-
-  example::Value name_val;
-  std::string *name = name_val.mutable_s_list()->add_value();
+  example::KeyValuePair name_pair;
+  name_pair.set_key("name");
+  example::Value* name_val = name_pair.mutable_value();
+  std::string *name = name_val->mutable_s_list()->add_value();
   *name = "Bob Dylan";
-  name = name_val.mutable_s_list()->add_value();
+  name = name_val->mutable_s_list()->add_value();
   *name = "Pink Floyd";
-  name = name_val.mutable_s_list()->add_value();
+  name = name_val->mutable_s_list()->add_value();
   *name = "Rust Lee";
   
-  example::Value age_val;
-  age_val.mutable_i_list()->add_value(64);
-  age_val.mutable_i_list()->add_value(53);
-  age_val.mutable_i_list()->add_value(18);
+  example::KeyValuePair age_pair;
+  age_pair.set_key("age");
+  example::Value* age_val = age_pair.mutable_value();
+  age_val->mutable_i_list()->add_value(64);
+  age_val->mutable_i_list()->add_value(53);
+  age_val->mutable_i_list()->add_value(18);
 
-  example::Value capital_val;
-  capital_val.mutable_d_list()->add_value(8888.4325);
-  capital_val.mutable_d_list()->add_value(21.9876);
-  capital_val.mutable_d_list()->add_value(0.0001);
+  example::KeyValuePair capital_pair;
+  capital_pair.set_key("capital");
+  example::Value* capital_val = capital_pair.mutable_value();
+  capital_val->mutable_d_list()->add_value(8888.4325);
+  capital_val->mutable_d_list()->add_value(21.9876);
+  capital_val->mutable_d_list()->add_value(0.0001);
+
+  // testing the ordering of map in protobuf
+  example::ValueMapSimple *val_map = instance->mutable_common_features();
+  val_map->add_value_map(star_pair.SerializeAsString());
   
-  example::ValueMap value_map2;
-  value_map2.mutable_value_map()->insert({"employee", name_val});
-  value_map2.mutable_value_map()->insert({"age", age_val});
-  value_map2.mutable_value_map()->insert({"capital", capital_val});
+  example::ValueMapSimple* val_map1 = instance->add_ad_features();
+  val_map1->add_value_map(star_pair.SerializeAsString());
+  
+  example::ValueMapSimple* val_map3 = val_map1->add_sub_feature();
+  val_map3->add_value_map(country_pair.SerializeAsString());
+  val_map3->add_value_map(company_pair.SerializeAsString());
 
-  std::string bytes1;
-  value_map.SerializeToString(&bytes1);
-  instance->add_ad_features(bytes1);
+  example::ValueMapSimple* val_map2 = instance->add_ad_features();
+  val_map2->add_value_map(capital_pair.SerializeAsString());
 
-  std::string bytes2;
-  value_map2.SerializeToString(&bytes2);
+  example::ValueMapSimple* val_map4 = val_map2->add_sub_feature();
+  val_map4->add_value_map(name_pair.SerializeAsString());
+  val_map4->add_value_map(age_pair.SerializeAsString());
+
+  ::google::protobuf::RepeatedPtrField<example::ValueMapSimple>* ad_feature_list = instance->mutable_ad_features();
+  size_t sku_size = ad_feature_list->size();
+
+  ::google::protobuf::RepeatedPtrField<example::ValueMapSimple> base_ad_feature;
+  base_ad_feature.Swap(ad_feature_list);
+
+  ad_feature_list->Clear();
+  for (size_t i = 0; i < sku_size; ++i) {
+    const example::ValueMapSimple& feature = base_ad_feature.Get(i);
+    example::ValueMapSimple* new_feature = ad_feature_list->Add();
+
+    // ad_feature_list->Add()->Swap(base_ad_feature.Mutable(i));
+
+    for (int map_i = 0; map_i < feature.value_map_size(); ++map_i) {
+      new_feature->add_value_map(feature.value_map(map_i));
+    }
+    
+    for (int sub_feature_i = 0; sub_feature_i < feature.sub_feature_size(); ++sub_feature_i) {
+      const example::ValueMapSimple& sub_feature = feature.sub_feature().Get(sub_feature_i);
+      example::ValueMapSimple* new_sub_feature = new_feature->add_sub_feature();
+      for (int map_i = 0; map_i < sub_feature.value_map_size(); ++map_i) {
+        new_sub_feature->add_value_map(sub_feature.value_map(map_i));
+      }
+    }
+  }
 
   // size_t size = value_map.ByteSizeLong();
   // void* buffer = malloc(size);
@@ -127,45 +157,16 @@ void FillInstance(example::RequestInstanceSimple* instance) {
 
   // std::string bytes1 = value_map.SerializeAsString();
 
-  std::cout << "Print value map " << std::endl;
-  std::cout << bytes2 << std::endl;
-  std::cout << "End pritn of value map \n" << std::endl;
-
-  example::ValueMap vm2;
-  vm2.ParseFromString(bytes2);
-
-  std::cout << "Print exact map" << std::endl;
-  for (auto it = vm2.value_map().cbegin(); 
-        it != vm2.value_map().cend();
-        ++it) {
-    std::string key = it->first;
-
-    if (it->second.has_s_list()) {
-      int size = it->second.s_list().value_size();
-      for (int i = 0; i < size; i++) {
-        std::cout << key << " " << it->second.s_list().value(i) << std::endl;
-      }
-    } else if (it->second.has_d_list()) {
-      int size = it->second.d_list().value_size();
-      for (int i = 0; i < size; i++) {
-        std::cout << key << " " << it->second.d_list().value(i) << std::endl;
-      }
-    }
-  }
-  std::cout << "End of pritn exact map\n" << std::endl;
-
-  instance->set_common_features(bytes2);
   std::string data;
   instance->SerializeToString(&data);
 
   example::RequestInstanceValue inst1;
   inst1.ParseFromString(data);
-  std::string data1;
-  inst1.SerializeToString(&data1);
+  // std::string data1;
+  // inst1.SerializeToString(&data1);
 
-  example::RequestInstanceValue inst2;
-  inst2.ParseFromString(data1);
-
+  // example::RequestInstanceValue inst2;
+  // inst2.ParseFromString(data1);
 
   std::string strTest;
   TextFormat::PrintToString(inst1, &strTest);
