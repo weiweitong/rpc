@@ -3,6 +3,7 @@ if [ -n "$msg" ]; then
   git add -A
   git commit -m "${msg}"
   git push
+  echo "git status is:"
   git status
   echo "finish add, commit, push"
 else
