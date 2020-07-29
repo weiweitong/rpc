@@ -3,6 +3,7 @@
 .classpath
 .project
 .settings
+push.sh
 ##filter databfile、sln file##
 *.idea
 *.iml
